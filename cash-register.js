@@ -4,6 +4,7 @@ const checkCashRegister = (price, banknote, cashInput) => {
   // const sum = (banknote - price).toFixed(2);
   const sumInput = 5;
   // console.log(sumInput);
+  let status = '';
 
   const amounts = {
     0.01: 'PENNY',
@@ -20,8 +21,13 @@ const checkCashRegister = (price, banknote, cashInput) => {
   const changeArr = [];
 
   // @change - общая сдача
+  // !!!!!!!!! сделать чтобы метод не падал с пустым массивом !!!!!!!!!!
   const getBalance = (change) => change.map((x) => x[1])
     .reduce((accumulator, currentValue) => accumulator + currentValue[1]);
+
+  // получение всех номиналов
+  const amountsArr = Object.keys(amounts)
+    .sort((a, b) => a - b);
 
   // @sum - то что надо вернуть - 5 dollars
   // @cash - то из чего можно вернуть
@@ -35,18 +41,22 @@ const checkCashRegister = (price, banknote, cashInput) => {
     const getMoneyFromDrawer = (amount, name) => {
       console.log('getMoneyFromDrawer', amount, name);
 
-      cash = cash.map((x) => {
-        if (x[0] === name) {
+      const checkCash = cash.map((x) => {
+        if (x[0] === name && x[1] > 0) {
           return [name, x[1] - amount];
+        } if (x[0] === name && x[1] === 0) {
+          return null;
         }
         return x;
       });
-      console.log('cash', cash);
-    };
 
-    // получение всех номиналов
-    const amountsArr = Object.keys(amounts)
-      .sort((a, b) => a - b);
+      if (checkCash.includes(null)) {
+        return false;
+      }
+      cash = checkCash;
+      console.log('cash', cash);
+      return cash;
+    };
 
     // у findAmount собственная sum, потому что она уменьшаются рекурсивно
     const findAmount = (sum) => {
@@ -65,14 +75,19 @@ const checkCashRegister = (price, banknote, cashInput) => {
         return true;
       }
       // тут описать когда надо искать меньший номинал
-      if (false) {
+      if (getMoneyFromDrawer() === false) {
         const lowerAmount = amountsArr.filter((x) => x < amount)
           .pop();
-        findAmount(lowerAmount);
+        if (lowerAmount.length > 0) {
+          findAmount(lowerAmount);
+        }
+        return false;
       }
     };
 
-    findAmount(sumOut);
+    if (!findAmount(sumOut)) {
+      return { status: 'INSUFFICIENT_FUNDS', change: [] };
+    }
 
     console.log(changeArr);
 
@@ -86,17 +101,18 @@ const checkCashRegister = (price, banknote, cashInput) => {
     // }
   };
 
-  getChange(sumInput);
+  return getChange(sumInput);
 };
 
-checkCashRegister(19.5, 20, [
+console.log(checkCashRegister(19.5, 20, [
   ['PENNY', 1.01],
   ['NICKEL', 2.05],
   ['DIME', 3.1],
   ['QUARTER', 4.25],
   ['ONE', 90],
-  ['FIVE', 55],
+  ['FIVE', 0],
   ['TEN', 20],
   ['TWENTY', 60],
   ['ONE HUNDRED', 100],
-]);
+]));
+
