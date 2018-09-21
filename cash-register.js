@@ -27,17 +27,21 @@ const checkCashRegister = (price, banknote, cashInput) => {
   // @cash - то из чего можно вернуть
   // @amount - номинал
   const getChange = (sumOut) => {
-    const cash = cashInput.slice();
+    let cash = cashInput.slice();
 
-    const getMoneyFromDrawer = (name, amount) => {
-      console.log('getMoneyFromDrawer', cash, name, amount);
+    // @amount - номинал
+    // @name - название банкноты
+    // задача функции - уменьшить кол-во денег в кеше
+    const getMoneyFromDrawer = (amount, name) => {
+      console.log('getMoneyFromDrawer', amount, name);
 
-      cash.map((x) => {
+      cash = cash.map((x) => {
         if (x[0] === name) {
           return [name, x[1] - amount];
         }
         return x;
       });
+      console.log('cash', cash);
     };
 
     // получение всех номиналов
@@ -49,7 +53,6 @@ const checkCashRegister = (price, banknote, cashInput) => {
       // получил номинал меньший или равный сумме
       console.log('sum', sum);
 
-      console.log(amountsArr);
       const amount = amountsArr.filter((x) => x <= sum)
         .pop();
       console.log('amount', amount);
