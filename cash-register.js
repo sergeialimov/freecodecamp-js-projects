@@ -2,8 +2,8 @@
 // @banknote - банкнота
 const checkCashRegister = (price, banknote, cashInput) => {
   // const sum = (banknote - price).toFixed(2);
-  const sum = 5;
-  console.log(sum);
+  const sumInput = 5;
+  // console.log(sumInput);
 
   const amounts = {
     0.01: 'PENNY',
@@ -23,25 +23,10 @@ const checkCashRegister = (price, banknote, cashInput) => {
   const getBalance = (change) => change.map((x) => x[1])
     .reduce((accumulator, currentValue) => accumulator + currentValue[1]);
 
-  // @cash - money in drawer
-  // @name - название банкноты
-  // @amount - номинал
-  const getMoneyFromDrawer2 = (cash, name, amount) => {
-    const newCash = cash.slice();
-    cash.forEach((item) => {
-      if (item[0] === name) {
-        newCash.push([name, item[1] - amount]);
-      } else {
-        newCash.push();
-      }
-    });
-  };
-
-
   // @sum - то что надо вернуть - 5 dollars
   // @cash - то из чего можно вернуть
   // @amount - номинал
-  const getChange = (sum) => {
+  const getChange = (sumOut) => {
     const cash = cashInput.slice();
 
     const getMoneyFromDrawer = (name, amount) => {
@@ -84,7 +69,7 @@ const checkCashRegister = (price, banknote, cashInput) => {
       }
     };
 
-    findAmount(sum);
+    findAmount(sumOut);
 
     console.log(changeArr);
 
@@ -93,10 +78,12 @@ const checkCashRegister = (price, banknote, cashInput) => {
     // const diff = getBalance(changeArr) - sum;
     // if (diff > 0) {
     //   getChange(diff);
+    // } else {
+    // return changeArr;
     // }
   };
 
-  getChange();
+  getChange(sumInput);
 };
 
 checkCashRegister(19.5, 20, [
