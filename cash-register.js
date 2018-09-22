@@ -18,7 +18,25 @@ const checkCashRegister = (price, banknote, cashInput) => {
     100: 'ONE HUNDRED',
   };
 
-  const changeArr = [];
+  const result = { status: 'INSUFFICIENT_FUNDS', change: [] };
+
+  // функция складывает сдачу
+  // проверяет, есть ли уже такие номиналы. Если есть, то добавляет к существующему,
+  // если нет, то добавляет новый
+  // @sum - сумма, которую необходимо добавить к сдаче
+  // @amount - номинал банкноты
+  const putChange = (amount, sum) => {
+    const checkAmount = result.change.map((x) => {
+      if (x[0] === amount) {
+        return [amount, x[1] + sum];
+      }
+      return null;
+    });
+
+    if (checkAmount.includes(null)) {
+      result.change.push([amount, sum]);
+    }
+  };
 
   // @change - общая сдача
   // !!!!!!!!! сделать чтобы метод не падал с пустым массивом !!!!!!!!!!
@@ -71,7 +89,7 @@ const checkCashRegister = (price, banknote, cashInput) => {
       if (getMoneyFromDrawer(amount, amounts[amount])) {
         console.log('if getMoneyFromDrawer', amount, amounts[amount]);
 
-        changeArr.push([amounts[amount], amount]);
+        putChange([amounts[amount], amount]);
         return true;
       }
       // тут описать когда надо искать меньший номинал
