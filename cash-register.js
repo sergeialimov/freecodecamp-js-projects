@@ -30,13 +30,9 @@ const getBalance = (change) => {
 // @amount - номинал
 // @name - название банкноты
 const getMoneyFromDrawer = (cash, amount, name) => {
-  // console.log('getMoneyFromDrawer', amount, name);
-
   const checkCash = cash.map((x) => {
     if (x[0] === name && x[1] > 0) {
-      return [name, x[1] - amount];
-      
-      // !!! rework !!!
+      return [name, (x[1] - amount).toFixed(2)];
     } if (x[0] === name && x[1] === 0) {
       return null;
     }
@@ -56,7 +52,7 @@ const getMoneyFromDrawer = (cash, amount, name) => {
 // @cashInput - money in cash drawer
 const checkCashRegister = (price, banknote, cashInput) => {
   // const sum = (banknote - price).toFixed(2);
-  const sumInput = 10.5;
+  const sumInput = 0.57;
   const result = { status: 'INSUFFICIENT_FUNDS', change: [] };
 
   // Если номинал существует - прибавляет, если нет - добавляет новый
@@ -71,7 +67,6 @@ const checkCashRegister = (price, banknote, cashInput) => {
       }
       return x;
     });
-
     if (result.change.length === 0 || !isAmountExists) {
       result.change.push([amount, sum]);
     } else {
@@ -79,7 +74,6 @@ const checkCashRegister = (price, banknote, cashInput) => {
     }
     console.log('result.change', result.change);
   };
-
 
   // @sum - то что надо вернуть - 5 dollars
   // @internalCash - то из чего можно вернуть
@@ -109,11 +103,10 @@ const checkCashRegister = (price, banknote, cashInput) => {
       return { status: 'INSUFFICIENT_FUNDS', change: [] };
     }
     // compare required change with prepared change
-    // почему здесь sumInput, а не sum?
     console.log('sumInput', sumInput);
-    console.log('getBalance(result.change)', getBalance(result.change));
+    // console.log('getBalance(result.change)', getBalance(result.change));
     
-    const diff = sumInput - getBalance(result.change);                                          console.log('diff', diff);
+    const diff = (sumInput - getBalance(result.change)).toFixed(2);                                          console.log('diff', diff);
     if (diff > 0) {
       getChange(diff, cash);
     }                                                                                        console.log('-------------------------------');
