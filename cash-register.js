@@ -30,30 +30,32 @@ const getBalance = (change) => {
 // @amount - номинал
 // @name - название банкноты
 const getMoneyFromDrawer = (cash, amount, name) => {
+  console.log('getMoneyFromDrawer cash', cash);
+  
+  let isMoneyEnough = false;
   const checkCash = cash.map((x) => {
     if (x[0] === name && x[1] > 0) {
+      isMoneyEnough = true;
       return [name, (x[1] - amount).toFixed(2)];
-    } if (x[0] === name && x[1] === 0) {
-      return null;
     }
     return x;
   });
-
-  if (checkCash.includes(null)) {
+  
+  if (!isMoneyEnough) {
+    console.log('isMoneyEnough', isMoneyEnough);
     return false;
   }
-  console.log('checkCash', checkCash);
+  console.log('newCash', checkCash);
   return checkCash;
 };
 
-// checking for existing money in drawer
 // @price - сумма к оплате
 // @banknote - банкнота
 // @cashInput - money in cash drawer
 const checkCashRegister = (price, banknote, cashInput) => {
   // const sum = (banknote - price).toFixed(2);
-  const sumInput = 0.57;
-  const result = { status: 'INSUFFICIENT_FUNDS', change: [] };
+  const sumInput = 0.11;
+  let result = { status: 'INSUFFICIENT_FUNDS', change: [] };
 
   // Если номинал существует - прибавляет, если нет - добавляет новый
   // @sum - сумма, которую необходимо добавить к сдаче
@@ -77,21 +79,25 @@ const checkCashRegister = (price, banknote, cashInput) => {
 
   // @sum - то что надо вернуть - 5 dollars
   // @internalCash - то из чего можно вернуть
-  const getChange = (sumOut, internalCash) => {                                             console.log('internalCash', internalCash);
-    let cash = internalCash.slice();                                                      console.log('-------------------------------');
+  const getChange = (sumOut, internalCash) => {                                                         console.log('internalCash', internalCash);
+    let cash = internalCash.slice();                                                                  console.log('-------------------------------');
     let sum = sumOut;
     // у findAmount собственная sum, потому что она уменьшаются рекурсивно
-    const findAmount = (sum) => {                                                           console.log('sum', sum);
+    const findAmount = (sum) => {                                                                     console.log('sum', sum);
       // получил номинал меньший или равный сумме
       const amount = amountsArr.filter((x) => x <= sum)
-        .pop();                                                                             console.log('amount', amount, typeof(amount));
+        .pop();                                    
+                                                 
+      // console.log('amount', amount, typeof(amount), amount.pop());
       cash = getMoneyFromDrawer(cash, amount, amounts[amount]);
       if (cash) {               
         putChange(amounts[amount], parseFloat(amount));
         return true;
+      } else {
+        return false;
       }
       // поиск меньшего номинала
-      const lowerAmount = amountsArr.filter((x) => x < amount)
+      const lowerAmount = amountsArr.filter((x) => x <= amount)
         .pop();
       if (lowerAmount.length > 0) {
         findAmount(lowerAmount);
@@ -100,16 +106,19 @@ const checkCashRegister = (price, banknote, cashInput) => {
     };
 
     if (!findAmount(sumOut)) {
-      return { status: 'INSUFFICIENT_FUNDS', change: [] };
+      result = { status: 'INSUFFICIENT_FUNDS', change: [] };
+      console.log('result ------');
+      
+      return;
     }
     // compare required change with prepared change
     console.log('sumInput', sumInput);
-    // console.log('getBalance(result.change)', getBalance(result.change));
+    console.log('getBalance(result.change)', getBalance(result.change));
     
     const diff = (sumInput - getBalance(result.change)).toFixed(2);                                          console.log('diff', diff);
     if (diff > 0) {
       getChange(diff, cash);
-    }                                                                                        console.log('-------------------------------');
+    }                                                                                                       console.log('-------------------------------');
     return result;
   };
   return getChange(sumInput, cashInput);
@@ -117,7 +126,7 @@ const checkCashRegister = (price, banknote, cashInput) => {
 
 
 console.log(checkCashRegister(19.5, 20, [
-  ['PENNY', 1.01],
+  ['PENNY', 0.01],
   ['NICKEL', 2.05],
   ['DIME', 3.1],
   ['QUARTER', 4.25],
