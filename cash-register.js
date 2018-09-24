@@ -35,6 +35,8 @@ const getMoneyFromDrawer = (cash, amount, name) => {
   const checkCash = cash.map((x) => {
     if (x[0] === name && x[1] > 0) {
       return [name, x[1] - amount];
+      
+      // !!! rework !!!
     } if (x[0] === name && x[1] === 0) {
       return null;
     }
@@ -54,23 +56,23 @@ const getMoneyFromDrawer = (cash, amount, name) => {
 // @cashInput - money in cash drawer
 const checkCashRegister = (price, banknote, cashInput) => {
   // const sum = (banknote - price).toFixed(2);
-  const sumInput = 7;
+  const sumInput = 10.5;
   const result = { status: 'INSUFFICIENT_FUNDS', change: [] };
 
   // Если номинал существует - прибавляет, если нет - добавляет новый
   // @sum - сумма, которую необходимо добавить к сдаче
   // @amount - номинал банкноты
   const putChange = (amount, sum) => {
-    console.log('putChange', amount, sum);
+    let isAmountExists = false;
     const checkAmount = result.change.map((x) => {
       if (x[0] === amount) {
+        isAmountExists = true;
         return [amount, x[1] + sum];
       }
-      return null;
+      return x;
     });
-    console.log('checkAmount', checkAmount);
 
-    if (result.change.length === 0 || checkAmount.includes(null)) {
+    if (result.change.length === 0 || !isAmountExists) {
       result.change.push([amount, sum]);
     } else {
       result.change = checkAmount;
@@ -88,10 +90,10 @@ const checkCashRegister = (price, banknote, cashInput) => {
     const findAmount = (sum) => {                                                           console.log('sum', sum);
       // получил номинал меньший или равный сумме
       const amount = amountsArr.filter((x) => x <= sum)
-        .pop();                                                                             console.log('amount', amount);
+        .pop();                                                                             console.log('amount', amount, typeof(amount));
       cash = getMoneyFromDrawer(cash, amount, amounts[amount]);
-      if (cash) {                                                                        console.log('if getMoneyFromDrawer', amount, amounts[amount]);
-        putChange(amounts[amount], amount);
+      if (cash) {               
+        putChange(amounts[amount], parseFloat(amount));
         return true;
       }
       // поиск меньшего номинала
@@ -107,10 +109,11 @@ const checkCashRegister = (price, banknote, cashInput) => {
       return { status: 'INSUFFICIENT_FUNDS', change: [] };
     }
     // compare required change with prepared change
-    console.log('sum', sum);
-    console.log('balance', getBalance(result.change));
+    // почему здесь sumInput, а не sum?
+    console.log('sumInput', sumInput);
+    console.log('getBalance(result.change)', getBalance(result.change));
     
-    const diff = sumInput - getBalance(result.change);                                       console.log('diff', diff);
+    const diff = sumInput - getBalance(result.change);                                          console.log('diff', diff);
     if (diff > 0) {
       getChange(diff, cash);
     }                                                                                        console.log('-------------------------------');
