@@ -1,4 +1,4 @@
-const amounts = {
+const amountsTable = {
   0.01: 'PENNY',
   0.05: 'NICKEL',
   0.1: 'DIME',
@@ -11,7 +11,7 @@ const amounts = {
 };
 
 // получение всех номиналов
-const amountsArr = Object.keys(amounts)
+const amounts = Object.keys(amountsTable)
   .sort((a, b) => a - b);
 
 // подсчет приготовленной сдачи
@@ -79,19 +79,49 @@ const whatStatus = (cashInput, sumInput) => {
   return 'OPEN';
 }
 
+const findAmount = (sum, lowerAmountRequired) => {
+  if (lowerAmountRequired) {
+    return amounts.filter((amount) => amount < sum).pop();
+  }
+  return amounts.filter((amount) => amount <= sum).pop();
+}
+
+// возвращает result.change и cash
+const getDrawerAndCash = (sum, cash, change, amount) => {                                                                                 console.log('sum', sum);
+  // получение номинала равного сумме или меньше
+  const newCashDrawer = getMoneyFromDrawer(cash, amount, amountsTable[amount]);
+  // если деньги из лотка достали и вернулся новый cash drawer
+  if (newCashDrawer) {
+    // добавляем деньги к сдаче и возвращаем change. А как мы возвращаем cash?
+    return {
+      cash: newCashDrawer,
+      change: putChange(amountsTable[amount], parseFloat(amount), change),
+    }
+  // если деньги достать не получилось и номинал = 0.01
+  } else if (!newCashDrawer && amount === 0.01) {                                                                       console.log('findAmount cash', cash);
+    return false;
+  }
+  
+  // ищем меньший номинал
+  const lowerAmount = findAmount(sum, true); // true - lowerAmountRequired
+  if (lowerAmount) {
+    findAmountAndGetMoneyFromDrawer(sum, cash, change, lowerAmount);
+  }
+};
+
 const findAmount = (sum, cash) => {                                                                                 console.log('sum', sum);
   // получил номинал меньший или равный сумме
-  const amount = amountsArr.filter((x) => x <= sum)
+  const amount = amounts.filter((x) => x <= sum)
     .pop();                                                                                                         console.log('amount', amount);
-  const checkCash = getMoneyFromDrawer(cash, amount, amounts[amount]); // false
+  const checkCash = getMoneyFromDrawer(cash, amount, amountsTable[amount]);
   if (checkCash) {                                                                                                  console.log('findAmount cash', cash);
-    result.change = putChange(amounts[amount], parseFloat(amount), result.change);
-    return true;
+    result.change = putChange(amountsTable[amount], parseFloat(amount), result.change);
+    return result;
   } else if (!checkCash && amount === 0.01) {                                                                       console.log('findAmount cash', cash);
     return false;
   }
   // поиск меньшего номинала
-  const lowerAmount = amountsArr.filter((x) => x <= amount)
+  const lowerAmount = amounts.filter((x) => x <= amount)
     .pop();
   if (lowerAmount.length > 0) {
     findAmount(lowerAmount);
@@ -99,7 +129,10 @@ const findAmount = (sum, cash) => {                                             
   return false;
 };
 
-module.exports.amounts = amounts;
+
+
+
+module.exports.amountsTable = amountsTable;
 module.exports.findAmount = findAmount;
 module.exports.whatStatus = whatStatus;
 module.exports.putChange = putChange;
