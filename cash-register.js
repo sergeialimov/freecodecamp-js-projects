@@ -72,20 +72,20 @@ const putChange = (amount, sum, changeInput) => {
   return change;                                                                                                    console.log('result.change', result.change);
 };
 
+const whatStatus = (cashInput, sumInput) => {
+  if (getCashBalance(cashInput) - sumInput === 0) {                                                        console.log('getCashBalance(cashInput)', getCashBalance(cashInput) - sumInput);
+    return 'CLOSED';
+  }                                                                                                console.log('getCashBalance(cashInput)', getCashBalance(cashInput) - sumInput);
+  return 'OPEN';
+}
+
 // @price - сумма к оплате
 // @banknote - банкнота
 // @cashInput - money in cash drawer
 const checkCashRegister = (price, banknotes, cashInput) => {
   const sumInput = (banknotes - price).toFixed(2);
-  let result = { status: ''};
-  if (getCashBalance(cashInput) - sumInput === 0) {                                                        console.log('getCashBalance(cashInput)', getCashBalance(cashInput) - sumInput);
-    result = { status: 'CLOSED', change: [] };
-  } else {                                                                                                 console.log('getCashBalance(cashInput)', getCashBalance(cashInput) - sumInput);
-    result = { status: 'OPEN', change: [] };
-  }                                                                                                       console.log('----------------- result', result);
+  let result = { status: whatStatus(cashInput, sumInput), change: [] };
   
-  // @sum - то что надо вернуть
-  // @internalCash - то из чего можно вернуть
   const getChange = (sumOut, internalCash) => {                                                          console.log('internalCash', internalCash);
     let cash = internalCash.slice();                                                                     console.log('-------------------------------');
     let sum = sumOut;
