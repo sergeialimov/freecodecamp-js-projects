@@ -31,7 +31,7 @@ const getCashBalance = (cash) => {
       .reduce((accumulator, currentValue) => accumulator + currentValue);
   }
   return 0;
-} 
+};
 
 // уменьшение кол-ва денег в кеше
 // @amount - номинал
@@ -44,32 +44,11 @@ const getMoneyFromDrawer = (cash, amount, name) => {                            
       return [name, (x[1] - amount).toFixed(2)];
     }
     return x;
-  });                                                                                                             console.log('checkCash', checkCash);
+  });                                                                                                             
   if (!isMoneyEnough) {                                                                                           console.log('isMoneyEnough', isMoneyEnough);
     return false;
-  }                                                                                                               console.log('newCash', checkCash);
-  return checkCash;
-};
-
-// Если номинал существует - прибавляет, если нет - добавляет новый
-// @sum - сумма, которую необходимо добавить к сдаче
-// @amount - номинал банкноты
-const putChange = (amount, sum, changeInput) => {
-  let change = changeInput.slice();
-  let isAmountExists = false;
-  const checkAmount = change.map((x) => {
-    if (x[0] === amount) {
-      isAmountExists = true;
-      return [amount, x[1] + sum];
-    }
-    return x;
-  });
-  if (change.length === 0 || !isAmountExists) {
-    change.push([amount, sum]);
-  } else {
-    change = checkAmount;
   }
-  return change;                                                                                                    console.log('result.change', result.change);
+  return checkCash;
 };
 
 const whatStatus = (cashInput, sumInput) => {
@@ -77,63 +56,74 @@ const whatStatus = (cashInput, sumInput) => {
     return 'CLOSED';
   }                                                                                                                 console.log('getCashBalance(cashInput)', getCashBalance(cashInput) - sumInput);
   return 'OPEN';
-}
+};
 
 const findAmount = (sum, lowerAmountRequired) => {
   if (lowerAmountRequired) {
+    // amount должен быть меньше не суммы, а предыдущего amount
     return amounts.filter((amount) => amount < sum).pop();
   }
   return amounts.filter((amount) => amount <= sum).pop();
-}
+};
+
+// Если номинал существует - прибавляет, если нет - добавляет новый
+// @sum - сумма, которую необходимо добавить к сдаче
+// @title - название банкноты
+// @amount - номинал банкноты
+const putChange = (title, amount, changeInput) => {
+  console.log('putChange', title, amount, changeInput);
+  let change = changeInput.slice();
+  let isAmountExists = false;
+  const checkAmount = change.map((x) => {
+    if (x[0] === title) {
+      isAmountExists = true;
+      return [title, x[1] + amount];
+    }
+    return x;
+  });
+  if (change.length === 0 || !isAmountExists) {
+    change.push([title, amount]);
+  } else {
+    change = checkAmount;
+  }
+  console.log('change', change);
+  return change;
+};
 
 // возвращает result.change и cash
-const getDrawerAndCash = (sum, cash, change, amount) => {                                                                                 console.log('sum', sum);
+const getCashAndChange = (sum, cash, change, amount) => {
   // получение номинала равного сумме или меньше
   const newCashDrawer = getMoneyFromDrawer(cash, amount, amountsTable[amount]);
+  console.log('newCashDrawer', newCashDrawer);
+  let result = {};
   // если деньги из лотка достали и вернулся новый cash drawer
   if (newCashDrawer) {
+    console.log('newCashDrawer true', newCashDrawer);
     // добавляем деньги к сдаче и возвращаем change. А как мы возвращаем cash?
-    return {
+    result = {
       cash: newCashDrawer,
       change: putChange(amountsTable[amount], parseFloat(amount), change),
-    }
+    };
+    console.log('result', result);
   // если деньги достать не получилось и номинал = 0.01
-  } else if (!newCashDrawer && amount === 0.01) {                                                                       console.log('findAmount cash', cash);
+  } else if (!newCashDrawer && amount === 0.01) {
+    console.log('!newCashDrawer && amount === 0.01');
     return false;
+  } else {
+    // ищем меньший номинал
+    const lowerAmount = findAmount(amount, true); // true - lowerAmountRequired
+    if (lowerAmount) {
+      console.log('lowerAmount', lowerAmount);
+      getCashAndChange(sum, cash, change, lowerAmount);
+    }
   }
-  
-  // ищем меньший номинал
-  const lowerAmount = findAmount(sum, true); // true - lowerAmountRequired
-  if (lowerAmount) {
-    findAmountAndGetMoneyFromDrawer(sum, cash, change, lowerAmount);
-  }
+  console.log('result2', result);
+  return result;
 };
-
-const findAmount = (sum, cash) => {                                                                                 console.log('sum', sum);
-  // получил номинал меньший или равный сумме
-  const amount = amounts.filter((x) => x <= sum)
-    .pop();                                                                                                         console.log('amount', amount);
-  const checkCash = getMoneyFromDrawer(cash, amount, amountsTable[amount]);
-  if (checkCash) {                                                                                                  console.log('findAmount cash', cash);
-    result.change = putChange(amountsTable[amount], parseFloat(amount), result.change);
-    return result;
-  } else if (!checkCash && amount === 0.01) {                                                                       console.log('findAmount cash', cash);
-    return false;
-  }
-  // поиск меньшего номинала
-  const lowerAmount = amounts.filter((x) => x <= amount)
-    .pop();
-  if (lowerAmount.length > 0) {
-    findAmount(lowerAmount);
-  }
-  return false;
-};
-
-
-
 
 module.exports.amountsTable = amountsTable;
 module.exports.findAmount = findAmount;
+module.exports.getCashAndChange = getCashAndChange;
 module.exports.whatStatus = whatStatus;
 module.exports.putChange = putChange;
 module.exports.getMoneyFromDrawer = getMoneyFromDrawer;
