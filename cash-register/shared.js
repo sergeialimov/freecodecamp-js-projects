@@ -36,7 +36,7 @@ const getCashBalance = (cash) => {
 // уменьшение кол-ва денег в кеше
 // @amount - номинал
 // @name - название банкноты
-const getMoneyFromDrawer = (cash, amount, name) => {                                                              console.log('getMoneyFromDrawer cash', cash, amount, name);
+const getMoneyFromDrawer = (cash, amount, name) => {                                                              // console.log('getMoneyFromDrawer cash', cash, amount, name);
   let isMoneyEnough = false;
   const checkCash = cash.map((x) => {
     if (x[0] === name && x[1] > 0) {
@@ -45,7 +45,7 @@ const getMoneyFromDrawer = (cash, amount, name) => {                            
     }
     return x;
   });                                                                                                             
-  if (!isMoneyEnough) {                                                                                           console.log('isMoneyEnough', isMoneyEnough);
+  if (!isMoneyEnough) {console.log('not enough money');
     return false;
   }
   return checkCash;
@@ -92,19 +92,20 @@ const putChange = (title, amount, changeInput) => {
 
 // возвращает result.change и cash
 const getCashAndChange = (sum, cash, change, amount) => {
+  console.log('===');
+  
   // получение номинала равного сумме или меньше
   const newCashDrawer = getMoneyFromDrawer(cash, amount, amountsTable[amount]);
-  console.log('newCashDrawer', newCashDrawer);
   let result = {};
   // если деньги из лотка достали и вернулся новый cash drawer
+  // if (false) {
   if (newCashDrawer) {
     console.log('newCashDrawer true', newCashDrawer);
-    // добавляем деньги к сдаче и возвращаем change. А как мы возвращаем cash?
+    const changeResult = putChange(amountsTable[amount], parseFloat(amount), change);
     result = {
       cash: newCashDrawer,
-      change: putChange(amountsTable[amount], parseFloat(amount), change),
+      change: changeResult,
     };
-    console.log('result', result);
   // если деньги достать не получилось и номинал = 0.01
   } else if (!newCashDrawer && amount === 0.01) {
     console.log('!newCashDrawer && amount === 0.01');
@@ -114,10 +115,9 @@ const getCashAndChange = (sum, cash, change, amount) => {
     const lowerAmount = findAmount(amount, true); // true - lowerAmountRequired
     if (lowerAmount) {
       console.log('lowerAmount', lowerAmount);
-      getCashAndChange(sum, cash, change, lowerAmount);
+      return getCashAndChange(sum, cash, change, lowerAmount);
     }
   }
-  console.log('result2', result);
   return result;
 };
 
