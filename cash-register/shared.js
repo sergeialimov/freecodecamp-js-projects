@@ -51,6 +51,31 @@ const getMoneyFromDrawer = (cash, amount, name) => {                            
   return checkCash;
 };
 
+// Если номинал существует - прибавляет, если нет - добавляет новый
+// @sum - сумма, которую необходимо добавить к сдаче
+// @title - название банкноты
+// @amount - номинал банкноты
+const putChange = (title, amount, changeInput) => {
+  console.log('putChange', title, amount, changeInput);
+  let change = changeInput.slice();
+  let isAmountExists = false;
+  const checkAmount = change.map((x) => {
+    if (x[0] === title) {
+      isAmountExists = true;
+      const r = parseFloat(x[1] + amount).toFixed(2);
+      return [title, r];
+    }
+    return x;
+  });
+  if (change.length === 0 || !isAmountExists) {
+    change.push([title, amount]);
+  } else {
+    change = checkAmount;
+  }
+  console.log('change', change);
+  return change;
+};
+
 const whatStatus = (cashInput, sumInput) => {
   if (getCashBalance(cashInput) - sumInput === 0) {                                                                 console.log('getCashBalance(cashInput)', getCashBalance(cashInput) - sumInput);
     return 'CLOSED';
@@ -64,30 +89,6 @@ const findAmount = (sum, lowerAmountRequired) => {
     return amounts.filter((amount) => amount < sum).pop();
   }
   return amounts.filter((amount) => amount <= sum).pop();
-};
-
-// Если номинал существует - прибавляет, если нет - добавляет новый
-// @sum - сумма, которую необходимо добавить к сдаче
-// @title - название банкноты
-// @amount - номинал банкноты
-const putChange = (title, amount, changeInput) => {
-  console.log('putChange', title, amount, changeInput);
-  let change = changeInput.slice();
-  let isAmountExists = false;
-  const checkAmount = change.map((x) => {
-    if (x[0] === title) {
-      isAmountExists = true;
-      return [title, x[1] + amount];
-    }
-    return x;
-  });
-  if (change.length === 0 || !isAmountExists) {
-    change.push([title, amount]);
-  } else {
-    change = checkAmount;
-  }
-  console.log('change', change);
-  return change;
 };
 
 // возвращает result.change и cash
