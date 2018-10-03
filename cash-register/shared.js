@@ -56,17 +56,16 @@ const getMoneyFromDrawer = (cash, amount, name) => {                            
 // @title - название банкноты
 // @amount - номинал банкноты
 const putChange = (title, amount, changeInput) => {
-  console.log('putChange', title, amount, changeInput);
   let change = changeInput.slice();
   let isAmountExists = false;
   const checkAmount = change.map((x) => {
     if (x[0] === title) {
       isAmountExists = true;
-      return [title, (parseFloat(x[1]) + amount).toFixed(2)];
+      const sum = parseFloat(x[1]) + amount;
+      return [title, parseFloat(sum.toFixed(2))];
     }
     return x;
   });
-  console.log('checkAmount', checkAmount);
   if (change.length === 0 || !isAmountExists) {
     change.push([title, amount]);
   } else {
