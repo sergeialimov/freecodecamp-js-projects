@@ -127,6 +127,10 @@ const getCashAndChange = (sum, cash, change, amount) => {
   return result;
 };
 
+// Main coordinate recursive function for checking cash
+// @price - price of product
+// @customersMoney - money from customer
+// @cashInput - available cash
 const checkCashRegister = (price, customersMoney, cashInput) => {
   const sumInput = (customersMoney - price).toFixed(2);
   let result = { status: whatStatus(cashInput, sumInput), change: [] };
