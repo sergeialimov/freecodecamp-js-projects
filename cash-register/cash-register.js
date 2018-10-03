@@ -2,13 +2,13 @@ const sh = require('./shared.js');
 
 const checkCashRegister = (price, customersMoney, cashInput) => {
   const sumInput = (customersMoney - price).toFixed(2);
-  const result = { status: sh.whatStatus(cashInput, sumInput), change: [] };
+  let result = { status: sh.whatStatus(cashInput, sumInput), change: [] };
   console.log('result', result);
 
 
   const getChange = (sumOut, cashOut, changeOut) => {
     console.log('cashOut', cashOut);
-    let cash = cashOut.slice();                                                                     console.log('-------------------------------');
+    let cash = cashOut.slice();
     let change = changeOut.slice();
     const sum = sumOut;
     // у findAmount собственная sum, потому что она уменьшаются рекурсивно
@@ -31,30 +31,8 @@ const checkCashRegister = (price, customersMoney, cashInput) => {
     console.log('quitting', result);
     return result;
   };
-  getChange(sumInput, cashInput, result.change);
+  return getChange(sumInput, cashInput, result.change);
 };
 
 
-checkCashRegister(19.5, 20,
-  [
-    ['PENNY', 0.5],
-    ['NICKEL', 0],
-    ["DIME", 0],
-    ['QUARTER', 0],
-    ["ONE", 0],
-    ['FIVE', 0],
-    ['TEN', 0],
-    ["TWENTY", 0],
-    ['ONE HUNDRED', 0]
-  ]);
-
-
-
-
-
-
-
-
-
-// result {status: "CLOSED", change: [["PENNY", 0.5], ["NICKEL", 0], ["DIME", 0], ["QUARTER", 0], ["ONE", 0], ["FIVE", 0], ["TEN", 0], ["TWENTY", 0], ["ONE HUNDRED", 0]]}.
-// };
+console.log(checkCashRegister(19.5, 20, [["PENNY", 0.5], ["NICKEL", 0], ["DIME", 0], ["QUARTER", 0], ["ONE", 0], ["FIVE", 0], ["TEN", 0], ["TWENTY", 0], ["ONE HUNDRED", 0]]));

@@ -16,7 +16,7 @@ const amounts = Object.keys(amountsTable)
 
 // подсчет приготовленной сдачи
 const getBalance = (change) => {
-  if (change.length > 0) {
+  if (change && change.length > 0) {
     return change.map((x) => parseFloat(x[1]))
       .reduce((accumulator, currentValue) => accumulator + currentValue);
   }
@@ -36,7 +36,7 @@ const getCashBalance = (cash) => {
 // уменьшение кол-ва денег в кеше
 // @amount - номинал
 // @name - название банкноты
-const getMoneyFromDrawer = (cash, amount, name) => {                                                              // console.log('getMoneyFromDrawer cash', cash, amount, name);
+const getMoneyFromDrawer = (cash, amount, name) => {
   let isMoneyEnough = false;
   const checkCash = cash.map((x) => {
     if (x[0] === name && x[1] > 0) {
@@ -76,9 +76,9 @@ const putChange = (title, amount, changeInput) => {
 };
 
 const whatStatus = (cashInput, sumInput) => {
-  if (getCashBalance(cashInput) - sumInput === 0) {                                                                 console.log('getCashBalance(cashInput)', getCashBalance(cashInput) - sumInput);
+  if (getCashBalance(cashInput) - sumInput === 0) {
     return 'CLOSED';
-  }                                                                                                                 console.log('getCashBalance(cashInput)', getCashBalance(cashInput) - sumInput);
+  }
   return 'OPEN';
 };
 
