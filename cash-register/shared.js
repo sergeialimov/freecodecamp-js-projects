@@ -62,11 +62,11 @@ const putChange = (title, amount, changeInput) => {
   const checkAmount = change.map((x) => {
     if (x[0] === title) {
       isAmountExists = true;
-      const r = parseFloat(x[1] + amount).toFixed(2);
-      return [title, r];
+      return [title, (parseFloat(x[1]) + amount).toFixed(2)];
     }
     return x;
   });
+  console.log('checkAmount', checkAmount);
   if (change.length === 0 || !isAmountExists) {
     change.push([title, amount]);
   } else {
@@ -94,12 +94,10 @@ const findAmount = (sum, lowerAmountRequired) => {
 // возвращает result.change и cash
 const getCashAndChange = (sum, cash, change, amount) => {
   console.log('===');
-  
   // получение номинала равного сумме или меньше
   const newCashDrawer = getMoneyFromDrawer(cash, amount, amountsTable[amount]);
   let result = {};
   // если деньги из лотка достали и вернулся новый cash drawer
-  // if (false) {
   if (newCashDrawer) {
     console.log('newCashDrawer true', newCashDrawer);
     const changeResult = putChange(amountsTable[amount], parseFloat(amount), change);

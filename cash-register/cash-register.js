@@ -6,10 +6,10 @@ const checkCashRegister = (price, customersMoney, cashInput) => {
   console.log('result', result);
 
 
-  const getChange = (sumOut, internalCash, changeOut) => {
-    console.log('internalCash', internalCash);
-    let cash = internalCash.slice();                                                                     console.log('-------------------------------');
-    let change = changeOut.slice();                                                                     console.log('-------------------------------');
+  const getChange = (sumOut, cashOut, changeOut) => {
+    console.log('cashOut', cashOut);
+    let cash = cashOut.slice();                                                                     console.log('-------------------------------');
+    let change = changeOut.slice();
     const sum = sumOut;
     // у findAmount собственная sum, потому что она уменьшаются рекурсивно
 
@@ -33,9 +33,6 @@ const checkCashRegister = (price, customersMoney, cashInput) => {
   };
   getChange(sumInput, cashInput, result.change);
 };
-
-
-
 
 
 checkCashRegister(19.5, 20,
