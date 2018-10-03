@@ -45,8 +45,8 @@ const getMoneyFromDrawer = (cash, amount, name) => {
       return [name, (x[1] - amount).toFixed(2)];
     }
     return x;
-  });                                                                                                             
-  if (!isMoneyEnough) {console.log('not enough money');
+  });
+  if (!isMoneyEnough) {
     return false;
   }
   return checkCash;
@@ -86,19 +86,18 @@ const whatStatus = (cash, sum) => {
   return 'OPEN';
 };
 
-// Finding amount 
+// Finding amount
 // @sum - sum that should be returned
 // @lowerAmountRequired - for cases when there are no more money for required amount
 const findAmount = (sum, lowerAmountRequired) => {
   if (lowerAmountRequired) {
     // amount должен быть меньше не суммы, а предыдущего amount
-    return amounts.filter((amount) => parseFloat(amount) < parseFloat(sum)).pop();
+    return amounts.filter((amount) => parseFloat(amount) < parseFloat(sum))
+      .pop();
   }
-  return amounts.filter((amount) => {
-    return parseFloat(amount) <= parseFloat(sum);
-  }).pop();
+  return amounts.filter((amount) => parseFloat(amount) <= parseFloat(sum))
+    .pop();
 };
-
 
 // Recursive function getting money from drawer and adding to change
 // @sum - sum that should be returned
@@ -133,11 +132,11 @@ const getCashAndChange = (sum, cash, change, amount) => {
 // @cashInput - available cash
 const checkCashRegister = (price, customersMoney, cashInput) => {
   const sumInput = (customersMoney - price).toFixed(2);
-  let result = { status: whatStatus(cashInput, sumInput), change: [] };
+  const result = { status: whatStatus(cashInput, sumInput), change: [] };
 
   const getChange = (sumOut, cashOut, changeOut) => {
-    let cash = cashOut.slice();
-    let change = changeOut.slice();
+    const cash = cashOut.slice();
+    const change = changeOut.slice();
     const sum = sumOut;
     const amount = findAmount(sum);
     const changeAndCash = getCashAndChange(sum, cash, change, amount);
@@ -146,12 +145,11 @@ const checkCashRegister = (price, customersMoney, cashInput) => {
       return { status: 'INSUFFICIENT_FUNDS', change: [] };
     }
     // comparing required change with prepared change
-    const diff = (sumInput - getBalance(changeAndCash.change)).toFixed(2);                                          
+    const diff = (sumInput - getBalance(changeAndCash.change)).toFixed(2);
     if (diff > 0) {
       return getChange(diff, changeAndCash.cash, changeAndCash.change);
-    }     
+    }
     result.change = changeAndCash.change;
-    
     if (result.status === 'CLOSED') {
       result.change = cashInput;
     }
@@ -159,5 +157,3 @@ const checkCashRegister = (price, customersMoney, cashInput) => {
   };
   return getChange(sumInput, cashInput, result.change);
 };
-
-
