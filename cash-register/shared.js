@@ -85,9 +85,11 @@ const whatStatus = (cashInput, sumInput) => {
 const findAmount = (sum, lowerAmountRequired) => {
   if (lowerAmountRequired) {
     // amount должен быть меньше не суммы, а предыдущего amount
-    return amounts.filter((amount) => amount < sum).pop();
+    return amounts.filter((amount) => parseFloat(amount) < parseFloat(sum)).pop();
   }
-  return amounts.filter((amount) => amount <= sum).pop();
+  return amounts.filter((amount) => {
+    return parseFloat(amount) <= parseFloat(sum);
+  }).pop();
 };
 
 // возвращает result.change и cash
@@ -98,7 +100,7 @@ const getCashAndChange = (sum, cash, change, amount) => {
   let result = {};
   // если деньги из лотка достали и вернулся новый cash drawer
   if (newCashDrawer) {
-    console.log('newCashDrawer true', newCashDrawer);
+    console.log('newCashDrawer', newCashDrawer);
     const changeResult = putChange(amountsTable[amount], parseFloat(amount), change);
     result = {
       cash: newCashDrawer,

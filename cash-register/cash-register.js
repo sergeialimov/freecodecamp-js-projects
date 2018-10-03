@@ -7,14 +7,15 @@ const checkCashRegister = (price, customersMoney, cashInput) => {
 
 
   const getChange = (sumOut, cashOut, changeOut) => {
-    console.log('cashOut', cashOut);
+    console.log('cash', cashOut);
     let cash = cashOut.slice();
     let change = changeOut.slice();
     const sum = sumOut;
     // у findAmount собственная sum, потому что она уменьшаются рекурсивно
 
     const amount = sh.findAmount(sum);
-
+    console.log('amount', amount, sum);
+    
     const changeAndCash = sh.getCashAndChange(sum, cash, change, amount);
     console.log('changeAndCash', changeAndCash);
 
@@ -35,4 +36,9 @@ const checkCashRegister = (price, customersMoney, cashInput) => {
 };
 
 
-console.log(checkCashRegister(19.5, 20, [["PENNY", 0.5], ["NICKEL", 0], ["DIME", 0], ["QUARTER", 0], ["ONE", 0], ["FIVE", 0], ["TEN", 0], ["TWENTY", 0], ["ONE HUNDRED", 0]]));
+console.log(
+  checkCashRegister(3.26, 100, [
+    ["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.1], 
+    ["QUARTER", 4.25], ["ONE", 90], ["FIVE", 55], 
+    ["TEN", 20], ["TWENTY", 60], ["ONE HUNDRED", 100]])
+);
