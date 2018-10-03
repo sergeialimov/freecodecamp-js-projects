@@ -92,6 +92,11 @@ const findAmount = (sum, lowerAmountRequired) => {
   }).pop();
 };
 
+const addOtherAmounts = (changeOut) => {
+  const change = changeOut.slice();
+  
+}
+
 // возвращает result.change и cash
 const getCashAndChange = (sum, cash, change, amount) => {
   console.log('===');
